@@ -16,7 +16,9 @@ public class Main{
         //        create connection, statement and execute query
         try{
             Connection conn = DriverManager.getConnection(url, username, password);
-
+            Statement stmt  = conn.createStatement();
+            String query = "SELECT * FROM student";
+            ResultSet rs    = stmt.executeQuery(query);
         }catch ( SQLException e){
             System.out.println("Connection failed: " + e.getMessage());
         }
