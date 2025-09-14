@@ -17,14 +17,22 @@ public class Main{
         try{
             Connection conn = DriverManager.getConnection(url, username, password);
             Statement stmt  = conn.createStatement();
+//            for selecting the row from table
 //            String query = "SELECT * FROM students";
-            String query = String.format("INSERT INTO students (name, age, marks) VALUES ('%s', %o, %f)", "Kri",22,88.4);
-//            ResultSet rs    = stmt.executeQuery(query);
 
+//            for inserting the row in table
+//            String query = String.format("INSERT INTO students (name, age, marks) VALUES ('%s', %o, %f)", "Kri",22,88.4);
+
+//            for updating the row in table
+            String query = String.format("UPDATE students SET marks = %f WHERE id = %d", 95.5, 2);
+
+//            ResultSet rs    = stmt.executeQuery(query); // for select and execute the query
+
+//          if any rows are affected then it will return number of rows affected
             int rowsAffected = stmt.executeUpdate(query);
-            if(rowsAffected > 0){
+            if(rowsAffected > 0){ //if affected rows are greater than 0 then insertion is successful
                 System.out.println("Insertion successful, rows affected: " + rowsAffected);
-            } else {
+            } else { //otherwise insertion failed
                 System.out.println("Insertion failed, no rows affected.");
             }
 
