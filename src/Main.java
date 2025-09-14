@@ -1,5 +1,7 @@
 import java.sql.*;
+import java.util.Scanner;
 
+//import java
 public class Main{
 //    url for database connection with database name
     private static final String url = "jdbc:mysql://localhost:3306/testmysql";
@@ -16,29 +18,27 @@ public class Main{
         //   create connection, statement and execute query
         try{
             Connection conn = DriverManager.getConnection(url, username, password);
-//            PreparedStatement
-//            String query = "Insert into students (name, age,marks) values (?,?,?)";//? is placeholder
+            Scanner sc = new Scanner(System.in);
+            Statement stmt= conn.createStatement();
+            while(true){
+                System.out.println("Enter your name : ");
+                String name = sc.next();
+                System.out.println("Enter your age : ");
+                int age = sc.nextInt();
+                System.out.println("Enter your marks : ");
+                double marks = sc.nextDouble();
 
-//            update using prepared statement
-//            String query = "Update students set marks = ? where name = ?";
+                System.out.println("Enter more details (y/n) ?");
+                String choice = sc.next();
+                String query = String.format("insert into students(name, age, marks) values('%s', %d, %f)", name, age, marks);
 
-//            Delete using prepared statement
-            String query = "Delete from students where id = ?";
-            PreparedStatement pstmt = conn.prepareStatement(query); // till
-            // this, query is compiled and after this we set values for placeholders
-//            pstmt.setString(2, "Arpita"); //1st placeholder
-//            pstmt.setInt(2,22);
-            pstmt.setDouble(1, 2);
-
-            int rowsAffected = pstmt.executeUpdate(); // for insert, update, delete
-            if(rowsAffected > 0){
-                System.out.println("Deletion successful, rows affected: " + rowsAffected);
-            }else{
-                System.out.println("Deletion failed");
+                stmt.addBatch(query);
+                if(choice.equalsIgnoreCase("n")){
+                    break;
+                }
             }
-            pstmt.close();
-            conn.close();
 
+//            int [] rowsAffected = stmt.executeBatch();
         }catch ( SQLException e){
             System.out.println("Connection failed: " + e.getMessage());
         }
