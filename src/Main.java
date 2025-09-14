@@ -20,17 +20,21 @@ public class Main{
 //            String query = "Insert into students (name, age,marks) values (?,?,?)";//? is placeholder
 
 //            update using prepared statement
-            String query = "Update students set marks = ? where name = ?";
-            PreparedStatement pstmt = conn.prepareStatement(query); // till this, query is compiled and after this we set values for placeholders
-            pstmt.setString(2, "Arpita"); //1st placeholder
+//            String query = "Update students set marks = ? where name = ?";
+
+//            Delete using prepared statement
+            String query = "Delete from students where id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query); // till
+            // this, query is compiled and after this we set values for placeholders
+//            pstmt.setString(2, "Arpita"); //1st placeholder
 //            pstmt.setInt(2,22);
-            pstmt.setDouble(1, 50.1);
+            pstmt.setDouble(1, 2);
 
             int rowsAffected = pstmt.executeUpdate(); // for insert, update, delete
             if(rowsAffected > 0){
-                System.out.println("updation successful, rows affected: " + rowsAffected);
+                System.out.println("Deletion successful, rows affected: " + rowsAffected);
             }else{
-                System.out.println("updation failed");
+                System.out.println("Deletion failed");
             }
             pstmt.close();
             conn.close();
