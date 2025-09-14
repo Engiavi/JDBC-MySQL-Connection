@@ -17,18 +17,20 @@ public class Main{
         try{
             Connection conn = DriverManager.getConnection(url, username, password);
 //            PreparedStatement
-            String query = "Insert into students (name, age,marks) values (?,?,?)";//? is placeholder
+//            String query = "Insert into students (name, age,marks) values (?,?,?)";//? is placeholder
 
+//            update using prepared statement
+            String query = "Update students set marks = ? where name = ?";
             PreparedStatement pstmt = conn.prepareStatement(query); // till this, query is compiled and after this we set values for placeholders
-            pstmt.setString(1, "Arpita"); //1st placeholder
-            pstmt.setInt(2,22);
-            pstmt.setDouble(3, 90.7);
+            pstmt.setString(2, "Arpita"); //1st placeholder
+//            pstmt.setInt(2,22);
+            pstmt.setDouble(1, 50.1);
 
             int rowsAffected = pstmt.executeUpdate(); // for insert, update, delete
             if(rowsAffected > 0){
-                System.out.println("Insert successful, rows affected: " + rowsAffected);
+                System.out.println("updation successful, rows affected: " + rowsAffected);
             }else{
-                System.out.println("Insert failed");
+                System.out.println("updation failed");
             }
             pstmt.close();
             conn.close();
