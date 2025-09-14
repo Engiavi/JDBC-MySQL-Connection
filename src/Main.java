@@ -16,34 +16,23 @@ public class Main{
         //   create connection, statement and execute query
         try{
             Connection conn = DriverManager.getConnection(url, username, password);
-            Statement stmt  = conn.createStatement();
-//            for selecting the row from table
-//            String query = "SELECT * FROM students";
+//            PreparedStatement
+            String query = "Insert into students (name, age,marks) values (?,?,?)";//? is placeholder
 
-//            for inserting the row in table
-//            String query = String.format("INSERT INTO students (name, age, marks) VALUES ('%s', %o, %f)", "Kri",22,88.4);
+            PreparedStatement pstmt = conn.prepareStatement(query); // till this, query is compiled and after this we set values for placeholders
+            pstmt.setString(1, "Arpita"); //1st placeholder
+            pstmt.setInt(2,22);
+            pstmt.setDouble(3, 90.7);
 
-//            for updating the row in table
-            String query = String.format("UPDATE students SET marks = %f WHERE id = %d", 95.5, 2);
-
-//            ResultSet rs    = stmt.executeQuery(query); // for select and execute the query
-
-//          if any rows are affected then it will return number of rows affected
-            int rowsAffected = stmt.executeUpdate(query);
-            if(rowsAffected > 0){ //if affected rows are greater than 0 then insertion is successful
-                System.out.println("Insertion successful, rows affected: " + rowsAffected);
-            } else { //otherwise insertion failed
-                System.out.println("Insertion failed, no rows affected.");
+            int rowsAffected = pstmt.executeUpdate(); // for insert, update, delete
+            if(rowsAffected > 0){
+                System.out.println("Insert successful, rows affected: " + rowsAffected);
+            }else{
+                System.out.println("Insert failed");
             }
+            pstmt.close();
+            conn.close();
 
-//          now printing each row of table using while loop
-//            while(rs.next()){
-//               int id = rs.getInt("id");
-//               String name = rs.getString("name");
-//               int age = rs.getInt("age");
-//               double marks = rs.getDouble("marks");
-//                System.out.println("id : " + id + ", name : " + name + ", age : " + age + ", marks : " + marks);
-//            }
         }catch ( SQLException e){
             System.out.println("Connection failed: " + e.getMessage());
         }
