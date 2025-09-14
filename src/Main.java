@@ -7,18 +7,27 @@ public class Main{
     private static final String password = "qwerty";
 
     public static void main(String [] args){
-//        below code is to load and register the driver class
+//      below code is to load and register the driver class
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
         }catch(ClassNotFoundException e){
             System.out.println("Driver not found: " + e.getMessage());
         }
-        //        create connection, statement and execute query
+        //   create connection, statement and execute query
         try{
             Connection conn = DriverManager.getConnection(url, username, password);
             Statement stmt  = conn.createStatement();
-            String query = "SELECT * FROM student";
+            String query = "SELECT * FROM students";
             ResultSet rs    = stmt.executeQuery(query);
+
+//          now printing each row of table using while loop
+            while(rs.next()){
+               int id = rs.getInt("id");
+               String name = rs.getString("name");
+               int age = rs.getInt("age");
+               double marks = rs.getDouble("marks");
+                System.out.println("id : " + id + ", name : " + name + ", age : " + age + ", marks : " + marks);
+            }
         }catch ( SQLException e){
             System.out.println("Connection failed: " + e.getMessage());
         }
