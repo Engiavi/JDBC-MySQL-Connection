@@ -38,7 +38,11 @@ public class Main{
                 }
             }
 
-//            int [] rowsAffected = stmt.executeBatch();
+            int [] rowsAffectedArr = stmt.executeBatch(); // this array holds number of rows affected by each query, 1 means affected while 0 means not affected.
+
+            for(int i=0; i<rowsAffectedArr.length; i++){
+                System.out.println("Query " + (i+1) + " affected " + rowsAffectedArr[i] + " rows.");
+            }
         }catch ( SQLException e){
             System.out.println("Connection failed: " + e.getMessage());
         }
