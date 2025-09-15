@@ -1,50 +1,76 @@
 import java.sql.*;
 import java.util.Scanner;
 
-//import java
-public class Main{
-//    url for database connection with database name
-    private static final String url = "jdbc:mysql://localhost:3306/testmysql";
+public class Main {
+    //    url for database connection with database name
+    private static final String url = "jdbc:mysql://localhost:3306/jdbcTransaction";
     private static final String username = "root";
     private static final String password = "qwerty";
 
-    public static void main(String [] args){
+    public static void main(String[] args) {
 //      below code is to load and register the driver class
-        try{
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        }catch(ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             System.out.println("Driver not found: " + e.getMessage());
         }
         //   create connection, statement and execute query
-        try{
-            Connection conn = DriverManager.getConnection(url, username, password);
-            Scanner sc = new Scanner(System.in);
-            Statement stmt= conn.createStatement();
-            while(true){
-                System.out.println("Enter your name : ");
-                String name = sc.next();
-                System.out.println("Enter your age : ");
-                int age = sc.nextInt();
-                System.out.println("Enter your marks : ");
-                double marks = sc.nextDouble();
+        try {
+            Connection con = DriverManager.getConnection(url, username, password);
 
-                System.out.println("Enter more details (y/n) ?");
-                String choice = sc.next();
-                String query = String.format("insert into students(name, age, marks) values('%s', %d, %f)", name, age, marks);
+            con.setAutoCommit(false); // disable auto-commit mode
 
-                stmt.addBatch(query);
-                if(choice.equalsIgnoreCase("n")){
-                    break;
-                }
+//            creating two query one for debit and other for credit
+            String debit_query = "update account set balance = balance - ? where account_number = ?";
+            String credit_query = "update account set balance = balance + ? where account_number = ?";
+
+//            likewise two statement will be created
+            PreparedStatement debit_stmt = con.prepareStatement(debit_query);
+            PreparedStatement credit_stmt = con.prepareStatement(credit_query);
+
+//            input the amount to be transferred
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter amount to be transferred: ");
+            double amount = scanner.nextDouble();
+
+
+//           enter the parameter(?) value for debit operation for account 101
+            debit_stmt.setDouble(1, amount);
+            debit_stmt.setInt(2, 101);
+
+//            enter the parameter(?) value for debit operation for account 102
+            credit_stmt.setDouble(1, amount);
+            credit_stmt.setInt(2, 103);
+
+            int affectedRows1 = debit_stmt.executeUpdate();
+            int affectedRows2 = credit_stmt.executeUpdate();
+
+            // check if account has sufficient balance
+            if (!isSufficientBalance(con, 101,amount)) {
+                con.rollback();
+                System.out.println("transaction failed due to insufficient balance");
+            }else{
+                con.commit();
+                System.out.println("Transaction successful");
             }
-
-            int [] rowsAffectedArr = stmt.executeBatch(); // this array holds number of rows affected by each query, 1 means affected while 0 means not affected.
-
-            for(int i=0; i<rowsAffectedArr.length; i++){
-                System.out.println("Query " + (i+1) + " affected " + rowsAffectedArr[i] + " rows.");
-            }
-        }catch ( SQLException e){
+        } catch (SQLException e) {
             System.out.println("Connection failed: " + e.getMessage());
         }
+    }
+
+    static boolean isSufficientBalance(Connection conn, int accountNumber, double amount) {
+        try {
+            String query = "select balance from account where account_number = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, accountNumber);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                double balance = rs.getDouble("balance");
+                return balance >= amount; // assuming we want to check if balance is at least
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking balance: " + e.getMessage());
+        }
+        return false;
     }
 }
